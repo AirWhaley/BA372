@@ -109,7 +109,7 @@ namespace Project_Backend
             int sqlView = 0; //intializing sqlView int
             while (!view)
             {
-                viewInt = Convert.ToInt32(Console.ReadLine());
+                viewInt = int.Parse(Console.ReadLine());
                 if (viewInt == 1)
                 {
                     Console.WriteLine("Financial Manager view selected");
@@ -141,13 +141,48 @@ namespace Project_Backend
                 }
             }
 
+            int approveInt;
+            int denyInt;
+
+
             if (viewInt == 1)//Example of financial manager approval updates
             {
                 Console.WriteLine("Finance Manager, approved request");
+                approveInt = int.Parse(Console.ReadLine());
+                query = "UPDATE Requests, Approval_Chain SET Requests.Current_Approval = Approval_Chain.Next_Approval WHERE Requests.Current_Approval = Approval_Chain.Before_Approval AND Requests.Req_ID =" + approveInt;
+                InsertsSqlCommand(query);
+                query = "INSERT INTO Request_Transaction ( Req_ID, Trans_Date, Trans_Emp, Approved, Comments )VALUES("+approveInt+", Date(), 1 "/*THIS 1 MUST BE SET TO EMPLOYEE ID OF VIEWER (Finance manager or director)*/ +", 0, \"None\")";
+                InsertsSqlCommand(query);
 
+
+                //Example of Financial manager deny updates
+                Console.WriteLine("Finance Manager, deny request");
+                denyInt = int.Parse(Console.ReadLine());
+                query = "UPDATE Requests SET Status = \"Denied\" WHERE Req_ID ="+denyInt;
+                InsertsSqlCommand(query);
+                query = "INSERT INTO Request_Transaction ( Req_ID, Trans_Date, Trans_Emp, Approved, Comments )VALUES(" + approveInt + ", Date(), 1 "/*THIS 1 MUST BE SET TO EMPLOYEE ID OF VIEWER (Finance manager or director)*/ + ", 0, \"Denied by financial manager\")";
+                InsertsSqlCommand(query);
 
             }
+            if (viewInt == 2)//Example of director approval updates
+            {
+                Console.WriteLine("Director, approved request");
+                approveInt = int.Parse(Console.ReadLine());
+                query = "UPDATE Requests SET Status = \"Approved\" WHERE Req_ID =" + approveInt;
+                InsertsSqlCommand(query);
+                query = "INSERT INTO Request_Transaction ( Req_ID, Trans_Date, Trans_Emp, Approved, Comments )VALUES(" + approveInt + ", Date(), 3 "/*THIS 1 MUST BE SET TO EMPLOYEE ID OF VIEWER (Finance manager or director)*/ + ", 0, \"Approved by director\")";
+                InsertsSqlCommand(query);
 
+
+                //Example of Director manager deny updates
+                Console.WriteLine("Director, deny request");
+                denyInt = int.Parse(Console.ReadLine());
+                query = "UPDATE Requests SET Status = \"Denied\" WHERE Req_ID =" + denyInt;
+                InsertsSqlCommand(query);
+                query = "INSERT INTO Request_Transaction ( Req_ID, Trans_Date, Trans_Emp, Approved, Comments )VALUES(" + approveInt + ", Date(), 3 "/*THIS 1 MUST BE SET TO EMPLOYEE ID OF VIEWER (Finance manager or director)*/ + ", 0, \"Denied by Director\")";
+                InsertsSqlCommand(query);
+
+            }
 
 
             Console.ReadLine();
