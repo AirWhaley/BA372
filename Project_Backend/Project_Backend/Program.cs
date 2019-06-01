@@ -64,7 +64,6 @@ namespace Project_Backend
                 //make an Oledbdatareader
                 System.Data.OleDb.OleDbDataReader Reader = null;
                 //connects to the database and catches if there is a problem connecting
-                int sqlReaderThing = 0;
                 List<string> sqlViewRequests = new List<string>(); //Initializing list so things can be stored in it
                 cmd = new OleDbCommand(SQLquery, Connection);
                 try
@@ -72,8 +71,7 @@ namespace Project_Backend
                     Reader = cmd.ExecuteReader();
                     while (Reader.Read()) // while there is still information to be read, pull that information out and add it to the list
                     {
-                        sqlViewRequests.Add(Convert.ToString((Reader[sqlReaderThing]))); //Converting reader output to string 
-                        sqlReaderThing += 0; //Counter to know at what stage in the SQL reader we are at
+                        sqlViewRequests.Add(Convert.ToString((Reader[0]))); //Converting reader output to string 
                     }
                     Reader.Close();
                 }
@@ -85,6 +83,45 @@ namespace Project_Backend
                 return sqlViewRequests;
             }
         }
+        public static List<string> GetReqInfo(int reqID)
+        {
+            //This Function is used for getting Req+ID info for populating rows. Each item pulls out into a list that can be referenced individually. 
+            {
+                //make an Oledbcommandobject
+                OleDbCommand cmd = null;
+                //make an Oledbdatareader
+                System.Data.OleDb.OleDbDataReader Reader = null;
+                //Making Query
+                string query = "SELECT * FROM Requests WHERE Req_ID =" + reqID;
+                //connects to the database and catches if there is a problem connecting
+                List<string> reqIDList = new List<string>(); //Initializing list so things can be stored in it
+                cmd = new OleDbCommand(query, Connection);
+                try
+                {
+                    Reader = cmd.ExecuteReader();
+                    while (Reader.Read()) // while there is still information to be read, pull that information out and add it to the list
+                    {
+                        reqIDList.Add(Convert.ToString(Reader["Travel"]));
+                        reqIDList.Add(Convert.ToString(Reader["Est_Total_Cost"]));
+                        reqIDList.Add(Convert.ToString(Reader["Emp_ID"]));
+                        reqIDList.Add(Convert.ToString(Reader["Description"]));
+                        reqIDList.Add(Convert.ToString(Reader["Begin_Date"]));
+                        reqIDList.Add(Convert.ToString(Reader["End_Date"]));
+                        reqIDList.Add(Convert.ToString(Reader["Decision_Date"]));
+                        reqIDList.Add(Convert.ToString(Reader["Status"]));
+                        reqIDList.Add(Convert.ToString(Reader["Current_Approval"]));
+                    }
+                    Reader.Close();
+                }
+                catch (InvalidOperationException)
+                {
+                    Connection.Close();
+                }
+                Reader.Close();
+                return reqIDList;
+            }
+        }
+
 
         static void Main(string[] args)
         {
@@ -131,8 +168,7 @@ namespace Project_Backend
             }
 
             string query = "SELECT REQ_ID FROM Requests WHERE Current_Approval=" + sqlView+ " AND Status=\"In-Progress\""; //building SQL query that will run agaisn't database using sqlView variable. 
-            List<int> sqlViewRequests = new List<int>(); //Initializing sqlViewRequests list. This will determine the length of the for loop that builds the rows in our GUI. 
-            sqlViewRequests = GetSqlList(query).Select(s => int.Parse(s)).ToList(); //Using GetSqlList function to populate the sqlViewRequests list. The select statement on the end is being used to parse the data into int's
+            List<int> sqlViewRequests = GetSqlList(query).Select(s => int.Parse(s)).ToList(); //Using GetSqlList function to populate the sqlViewRequests list. The select statement on the end is being used to parse the data into int's
             if (sqlViewRequests != null)// This is writing the SQL requests to the console for testing purposes
             {
                 for (int i = 0; i < sqlViewRequests.Count; i++)
@@ -140,11 +176,20 @@ namespace Project_Backend
                     Console.WriteLine(sqlViewRequests[i]);
                 }
             }
+            //Testing regID Function
+            int testID = 1;
+            Console.WriteLine("Testing req ID function");
+            List<string> testingReqID = GetReqInfo(testID).ToList(); //This line pulls the info from the "GetReqInfo() function and adds it to another list I just made using the .ToList command. Note you can also clear lists using ListName.Clear();
+            for (int i = 0; i < testingReqID.Count; i++)
+            {
+                Console.WriteLine(testingReqID[i]);
+            }
+            //Done testing reqID Function
 
+            //These are ints for the console app logic of approving or denying requests. Then used to build SQL Statements. We will have to modify this when we figure out our loop after integration. 
             int approveInt;
             int denyInt;
-
-
+            
             if (viewInt == 1)//Example of financial manager approval updates
             {
                 Console.WriteLine("Finance Manager, approved request");
