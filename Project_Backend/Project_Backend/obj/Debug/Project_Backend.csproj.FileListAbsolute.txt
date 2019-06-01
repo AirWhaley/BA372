@@ -1,0 +1,7 @@
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\obj\Debug\Project_Backend.csprojAssemblyReference.cache
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\obj\Debug\Project_Backend.csproj.CoreCompileInputs.cache
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\bin\Debug\Project_Backend.exe.config
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\bin\Debug\Project_Backend.exe
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\bin\Debug\Project_Backend.pdb
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\obj\Debug\Project_Backend.exe
+Z:\ba372\Project\BackendCode\Project_Backend\Project_Backend\obj\Debug\Project_Backend.pdb
